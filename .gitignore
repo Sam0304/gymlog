@@ -1,0 +1,7 @@
+# Lokale Werkzeug-Einstellungen (Vorschau-Server) nicht veröffentlichen
+.claude/
+
+# Systemdateien
+Thumbs.db
+desktop.ini
+.DS_Store
