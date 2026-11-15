@@ -7,6 +7,7 @@
 // Das laufende Training liegt in den Einstellungen ('activeWorkout'). So überlebt es,
 // wenn iOS die App im Hintergrund beendet.
 import { getAll, put, remove, getSetting, setSetting, uid } from './db.js';
+import { esc } from './ui.js';
 
 export const getActive = () => getSetting('activeWorkout', null);
 export const saveActive = (w) => setSetting('activeWorkout', w);
@@ -108,7 +109,9 @@ export function weekStats(workouts) {
 export const num = (n) => (n == null || n === '') ? '' : String(n).replace('.', ',');
 
 /** Kurzform eines Satzes, z. B. „60 × 10“, „+10 × 8“, „45 s“, „20 min · 3,5 km“. */
-export function fmtSet(s, log) {
+// Ergebnis landet in innerHTML → escapen (Werte können aus einem importierten Backup stammen)
+export const fmtSet = (s, log) => esc(fmtSetRaw(s, log));
+function fmtSetRaw(s, log) {
   switch (log) {
     case 'bw': return (s.w ? `+${num(s.w)} kg × ` : '') + `${s.r ?? '–'}`;
     case 'time': return `${s.s ?? '–'} s`;

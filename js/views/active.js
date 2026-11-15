@@ -83,7 +83,7 @@ export async function render(el) {
           ${x.sets.map((s, j) => {
             // Vorschlag: Werte vom letzten Mal, sonst das untere Plan-Ziel
             const ph = prev[j] || prev[prev.length - 1] || targetHint(x.target, ex.log);
-            return `<span class="set-no${s.done ? ' done' : ''}"${s.pr ? ` title="Rekord: ${s.pr}"` : ''}>${s.pr ? '🏆' : j + 1}</span>` +
+            return `<span class="set-no${s.done ? ' done' : ''}"${s.pr ? ` title="Rekord: ${esc(s.pr)}"` : ''}>${s.pr ? '🏆' : j + 1}</span>` +
               f.map(c => `<input class="set-in${s.done ? ' done' : ''}" data-j="${j}" data-k="${c.k}"
                  inputmode="decimal" autocomplete="off" aria-label="Satz ${j + 1} ${c.label}"
                  value="${num(s[c.k])}" placeholder="${num(ph[c.k])}">`).join('') +

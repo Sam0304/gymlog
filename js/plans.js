@@ -5,6 +5,7 @@
 // Der aktive Plan steht in den Einstellungen ('activePlan').
 import { getAll, get, put, remove, uid, getSetting, setSetting } from './db.js';
 import { startWorkout } from './workouts.js';
+import { esc } from './ui.js';
 
 export async function getPlans() {
   return (await getAll('plans')).sort((a, b) => a.created - b.created);
@@ -67,6 +68,6 @@ export function startFromPlan(plan, day) {
 }
 
 /** „3 × 8–12“ bzw. „3 × 10“; mit log zusätzlich die Einheit bei Zeit/Cardio („3 × 30–60 s“). */
-export const fmtTarget = (t, log) =>
+export const fmtTarget = (t, log) => esc(
   `${t.sets} × ${t.repsMin === t.repsMax ? t.repsMin : `${t.repsMin}–${t.repsMax}`}` +
-  (log === 'time' ? ' s' : log === 'cardio' ? ' min' : '');
+  (log === 'time' ? ' s' : log === 'cardio' ? ' min' : ''));

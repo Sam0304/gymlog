@@ -42,6 +42,33 @@ export const put = (store, value) => run(store, 'readwrite', s => s.put(value));
 export const remove = (store, id) => run(store, 'readwrite', s => s.delete(id));
 export const clear = (store) => run(store, 'readwrite', s => s.clear());
 
+/**
+ * Ersetzt den Inhalt mehrerer Stores in EINER Transaktion: Entweder wird alles
+ * geschrieben oder gar nichts (bei einem Fehler bleiben die alten Daten unverändert).
+ * data: { storeName: [Zeilen] } – jeder genannte Store wird zuerst geleert.
+ */
+export async function replaceAll(data) {
+  const db = await open();
+  const names = Object.keys(data);
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(names, 'readwrite');
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+    // abort() (auch von uns selbst ausgelöst) feuert kein onerror – sonst hinge das Promise ewig
+    tx.onabort = () => reject(tx.error || new Error('Speichern abgebrochen.'));
+    try {
+      for (const name of names) {
+        const store = tx.objectStore(name);
+        store.clear();
+        for (const row of data[name]) store.put(row);
+      }
+    } catch (e) {
+      tx.abort();
+      reject(e);
+    }
+  });
+}
+
 /** Einstellungen (Schlüssel/Wert), z. B. Favoriten. */
 export async function getSetting(key, fallback) {
   const row = await run('settings', 'readonly', s => s.get(key));

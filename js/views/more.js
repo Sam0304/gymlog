@@ -86,7 +86,13 @@ export async function render(el) {
       ok: 'Wiederherstellen', danger: true
     });
     if (!yes) return;
-    await importData(backup);
+    try {
+      await importData(backup);
+    } catch (e) {
+      // Import läuft in einer Transaktion: Bei einem Fehler ist nichts verändert worden
+      await ask({ title: 'Import fehlgeschlagen', text: `Deine bisherigen Daten sind unverändert. (${e?.message || e})`, ok: 'OK', cancel: null });
+      return;
+    }
     toast('✓ Backup wiederhergestellt');
     render(rerender(el));
   });

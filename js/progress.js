@@ -94,7 +94,8 @@ export const fmtVal =(v, unit) =>
   `${(Math.round(v * 10) / 10).toLocaleString('de-DE')}${unit ? ' ' + unit : ''}`;
 
 // ===== Wochenziel & Streak =====
-export const getWeeklyGoal = () => getSetting('weeklyGoal', 3);
+// Auf 1–7 begrenzt: Ein unsinniger Wert würde sonst die Anzeige (Punkte pro Ziel) sprengen
+export const getWeeklyGoal = async () => Math.min(7, Math.max(1, Math.floor(+await getSetting('weeklyGoal', 3)) || 3));
 export const setWeeklyGoal = (n) => setSetting('weeklyGoal', n);
 
 const prevWeek = (t) => startOfWeek(new Date(t - 3 * 864e5)); // robust gegen Zeitumstellung
@@ -105,6 +106,8 @@ const prevWeek = (t) => startOfWeek(new Date(t - 3 * 864e5)); // robust gegen Ze
  * bleibt die Serie der Vorwochen bestehen (sie „bricht“ erst nach Wochenende).
  */
 export function streak(workouts, goal) {
+  // Absicherung: Ein Ziel von 0 (z. B. aus einem kaputten Backup) ließe die Schleife unten nie enden
+  goal = Math.max(1, Math.floor(+goal) || 3);
   const counts = new Map();
   for (const w of workouts) {
     const k = startOfWeek(new Date(w.start));
