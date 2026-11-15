@@ -5,7 +5,7 @@
 //  - Offline oder schlechter Empfang (> 2,5 s): sofort die gespeicherte Version
 // Bei neuen Dateien VERSION erhöhen, dann werden alte Caches aufgeräumt.
 
-const VERSION = 'gymlog-v1.0'; // passend zu APP_VERSION in js/version.js erhöhen
+const VERSION = 'gymlog-v1.1'; // passend zu APP_VERSION in js/version.js erhöhen
 const TIMEOUT_MS = 2500;
 
 const FILES = [
